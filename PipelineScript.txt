@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+
+    environment {
+        PATH = "$PATH:/opt/apache-maven-3.9.2/bin"
+    }
+
+    stages {
+        stage('GetCode') {
+            steps {
+                git ''
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'myn clean install'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    withSonarQubeEnv('sonarqube-9.9.0') {
+                        sh 'myn sonar.sonar'
+                    }
+                }
+            }
+        }
+    }
+}
